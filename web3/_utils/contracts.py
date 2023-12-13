@@ -326,7 +326,7 @@ def decode_transaction_data(
     fn_abi: ABIFunction,
     data: HexStr,
     normalizers: Sequence[Callable[[TypeStr, Any], Tuple[TypeStr, Any]]] = None,
-) -> Dict[str, Any]:
+) -> Tuple[Any, ...]:
     # type ignored b/c expects data arg to be HexBytes
     data = HexBytes(data)  # type: ignore
     types = get_abi_input_types(fn_abi)
@@ -334,7 +334,9 @@ def decode_transaction_data(
     decoded = abi_codec.decode(types, HexBytes(data[4:]))
     if normalizers:
         decoded = map_abi_data(normalizers, types, decoded)
-    return named_tree(fn_abi["inputs"], decoded)
+
+    return decoded
+    # return named_tree(fn_abi["inputs"], decoded)
 
 
 def get_fallback_function_info(
